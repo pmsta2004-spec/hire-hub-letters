@@ -29,22 +29,29 @@ import {
   type LetterType,
 } from "@/lib/letters";
 
-type Search = { id?: string; type?: LetterType; name?: string; email?: string; phone?: string; position?: string; employmentType?: EmploymentType };
+type Search = {
+  id?: string | undefined;
+  type?: LetterType | undefined;
+  name?: string | undefined;
+  email?: string | undefined;
+  phone?: string | undefined;
+  position?: string | undefined;
+  employmentType?: EmploymentType | undefined;
+};
+
+const str = (v: unknown) => (typeof v === "string" && v ? v : undefined);
 
 export const Route = createFileRoute("/generate")({
   validateSearch: (search: Record<string, unknown>): Search => ({
-    id: typeof search.id === "string" ? search.id : undefined,
-    type: (["offer", "joining", "appointment"] as const).includes(search.type as LetterType)
-      ? (search.type as LetterType)
+    id: str(search["id"]),
+    type: (["offer", "joining", "appointment"] as const).includes(search["type"] as LetterType)
+      ? (search["type"] as LetterType)
       : undefined,
-    name: typeof search.name === "string" ? search.name : undefined,
-    email: typeof search.email === "string" ? search.email : undefined,
-    phone: typeof search.phone === "string" ? search.phone : undefined,
-    position: typeof search.position === "string" ? search.position : undefined,
-    employmentType:
-      typeof search.employmentType === "string"
-        ? (search.employmentType as EmploymentType)
-        : undefined,
+    name: str(search["name"]),
+    email: str(search["email"]),
+    phone: str(search["phone"]),
+    position: str(search["position"]),
+    employmentType: str(search["employmentType"]) as EmploymentType | undefined,
   }),
   head: () => ({
     meta: [
