@@ -37,7 +37,7 @@ function Body({ l }: { l: Letter }) {
         <Para>
           This offer is contingent upon verification of your documents, previous employment and
           educational records. By accepting, you agree to maintain confidentiality of all company
-          information and to abide by the policies of {COMPANY.managedBy.replace("Managed by ", "")}.
+          information and to abide by the policies of {COMPANY.managedBy.replace("Managed by ", "")}
         </Para>
         {l.notes ? <Para>{l.notes}</Para> : null}
         <Para>
