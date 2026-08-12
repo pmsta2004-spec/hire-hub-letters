@@ -1,6 +1,7 @@
 import logo from "@/assets/evolvenest-logo.jpeg.asset.json";
 import { COMPANY } from "@/lib/company";
 import { formatDate, type Letter } from "@/lib/letters";
+import { termsFor } from "@/lib/terms";
 
 function Para({ children }: { children: React.ReactNode }) {
   return <p className="mb-4 text-[13.5px] leading-relaxed text-ink">{children}</p>;
@@ -109,8 +110,86 @@ function Body({ l }: { l: Letter }) {
   );
 }
 
-export function LetterDocument({ letter }: { letter: Letter }) {
+function LetterHead() {
+  return null;
+}
+
+function TermsAnnexure({ letter }: { letter: Letter }) {
+  const groups = termsFor(letter.position, letter.employmentType);
   return (
+    <div
+      className="print-sheet print-break mx-auto mt-8 w-full max-w-[820px] rounded-xl border border-border bg-card p-8 shadow-lg sm:p-12"
+      style={{ fontFamily: "var(--font-letter)" }}
+    >
+      <div className="flex items-center gap-3 border-b-2 border-brand pb-4">
+        <img
+          src={logo.url}
+          alt="EvolveNest Energy logo"
+          className="h-12 w-12 shrink-0 rounded-md object-cover"
+        />
+        <div>
+          <h2 className="font-display text-lg font-bold leading-tight text-ink">{COMPANY.name}</h2>
+          <p className="text-[11px] text-muted-foreground">{COMPANY.website}</p>
+        </div>
+      </div>
+
+      <div className="mt-5 flex flex-wrap items-baseline justify-between gap-2 text-[12px] text-muted-foreground">
+        <span>
+          Ref No: <strong className="text-ink">{letter.letterId || "—"}</strong>
+        </span>
+        <span>Date: {formatDate(letter.letterDate)}</span>
+      </div>
+
+      <h1 className="my-5 text-center font-display text-base font-bold tracking-[0.16em] text-ink">
+        ANNEXURE — TERMS &amp; CONDITIONS
+      </h1>
+
+      <p className="mb-5 text-[12.5px] leading-relaxed text-ink">
+        These terms form an integral part of the {titleOf(letter).toLowerCase()} issued to{" "}
+        <strong>{letter.name || "Candidate Name"}</strong> for the position of{" "}
+        <strong>{letter.position}</strong> ({letter.employmentType}).
+      </p>
+
+      {groups.map((g) => (
+        <div key={g.heading} className="mb-5">
+          <h3 className="mb-2 font-display text-[12.5px] font-semibold uppercase tracking-wide text-brand-deep">
+            {g.heading}
+          </h3>
+          <ol className="list-decimal space-y-1.5 pl-5 text-[12.5px] leading-relaxed text-ink">
+            {g.items.map((t) => (
+              <li key={t}>{t}</li>
+            ))}
+          </ol>
+        </div>
+      ))}
+
+      <div className="mt-10 flex flex-wrap justify-between gap-10 text-[12.5px] text-ink">
+        <div className="min-w-[220px]">
+          <p className="h-12 border-b border-ink/40" />
+          <p className="mt-2 font-semibold">{letter.signatoryName || COMPANY.ceoName}</p>
+          <p className="text-muted-foreground">{letter.signatoryTitle}</p>
+        </div>
+        <div className="min-w-[220px]">
+          <p className="h-12 border-b border-ink/40" />
+          <p className="mt-2 font-semibold">
+            Read &amp; accepted: {letter.name || "Candidate Name"}
+          </p>
+          <p className="text-muted-foreground">Date: ____________________</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function LetterDocument({
+  letter,
+  showTerms = true,
+}: {
+  letter: Letter;
+  showTerms?: boolean;
+}) {
+  return (
+    <>
     <div
       className="print-sheet mx-auto w-full max-w-[820px] rounded-xl border border-border bg-card p-8 shadow-lg sm:p-12"
       style={{ fontFamily: "var(--font-letter)" }}
