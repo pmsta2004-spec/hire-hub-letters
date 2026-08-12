@@ -250,5 +250,8 @@ export function LetterDocument({
         </div>
       </div>
     </div>
+      {showTerms ? <TermsAnnexure letter={letter} /> : null}
+    </>
   );
 }
+
