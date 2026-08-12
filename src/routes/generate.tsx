@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Download, Save, RotateCcw } from "lucide-react";
+import { Download, Save, RotateCcw, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { SiteFooter, SiteHeader } from "@/components/SiteHeader";
 import { LetterDocument } from "@/components/LetterDocument";
@@ -95,6 +95,7 @@ function GeneratePage() {
   const navigate = useNavigate();
   const [letter, setLetter] = useState<Letter>(() => emptyLetter(search.type ?? "offer"));
   const [ready, setReady] = useState(false);
+  const [showTerms, setShowTerms] = useState(true);
 
   useEffect(() => {
     const existing = search.id ? getLetter(search.id) : undefined;
@@ -166,6 +167,9 @@ function GeneratePage() {
           <div className="flex gap-2">
             <Button variant="outline" onClick={() => setLetter(emptyLetter(letter.type))}>
               <RotateCcw className="mr-2 h-4 w-4" /> Reset
+            </Button>
+            <Button variant="outline" onClick={() => setShowTerms((v) => !v)}>
+              <FileText className="mr-2 h-4 w-4" /> {showTerms ? "Hide" : "Include"} terms page
             </Button>
             <Button variant="outline" onClick={save}>
               <Save className="mr-2 h-4 w-4" /> Save record
@@ -423,7 +427,7 @@ function GeneratePage() {
           </div>
 
           <div>
-            <LetterDocument letter={letter} />
+            <LetterDocument letter={letter} showTerms={showTerms} />
           </div>
         </div>
       </main>

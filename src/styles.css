@@ -182,6 +182,11 @@
     max-width: none !important;
     border-radius: 0 !important;
   }
+  .print-break {
+    break-before: page;
+    page-break-before: always;
+  }
+
   @page {
     size: A4;
     margin: 14mm;
