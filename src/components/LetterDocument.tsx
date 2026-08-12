@@ -110,9 +110,6 @@ function Body({ l }: { l: Letter }) {
   );
 }
 
-function LetterHead() {
-  return null;
-}
 
 function TermsAnnexure({ letter }: { letter: Letter }) {
   const groups = termsFor(letter.position, letter.employmentType);
