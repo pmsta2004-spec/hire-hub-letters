@@ -186,6 +186,13 @@
     break-before: page;
     page-break-before: always;
   }
+  .id-card {
+    box-shadow: none !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
 
   @page {
     size: A4;
