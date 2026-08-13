@@ -42,6 +42,12 @@ const features = [
     text: "Every letter is saved with a unique reference ID and can be reopened, edited or downloaded anytime.",
     to: "/records" as const,
   },
+  {
+    icon: IdCard,
+    title: "AI Employee ID Cards",
+    text: "Pull details from any saved letter record, upload a photo, enhance it with AI and download a branded ID card as PDF.",
+    to: "/idcard" as const,
+  },
 ];
 
 function Home() {
