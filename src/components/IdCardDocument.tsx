@@ -1,4 +1,3 @@
-import logo from "@/assets/evolvenest-logo.jpeg.asset.json";
 import { COMPANY } from "@/lib/company";
 import { formatDate } from "@/lib/letters";
 import type { IdCard } from "@/lib/idcards";
@@ -21,7 +20,7 @@ export function IdCardDocument({ card }: { card: IdCard }) {
       <div className="id-card relative flex h-[336px] w-[212px] flex-col overflow-hidden rounded-2xl border border-border bg-white shadow-lg">
         <div className="brand-gradient px-3 pb-6 pt-3 text-center">
           <img
-            src={logo.url}
+            src={COMPANY.logo}
             alt="EvolveNest Energy logo"
             className="mx-auto h-9 w-9 rounded-md bg-white object-cover p-0.5"
           />

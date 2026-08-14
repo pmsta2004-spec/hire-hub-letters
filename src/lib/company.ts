@@ -1,5 +1,6 @@
 export const COMPANY = {
   name: "EvolveNest Energy",
+  logo: "/evolvenest-logo.jpeg",
   managedBy: "Managed by EvolveNest Labs Pvt. Ltd.",
   website: "www.evolvenestenergy.com",
   email: "hello@evolvenestlabs.com",

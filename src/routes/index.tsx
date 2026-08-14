@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { FileText, UserRound, FolderOpen, Download, IdCard, Building2 } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/SiteHeader";
 import { COMPANY } from "@/lib/company";
-import logo from "@/assets/evolvenest-logo.jpeg.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -85,7 +84,7 @@ function Home() {
             </div>
           </div>
           <div className="justify-self-center rounded-2xl border border-white/15 bg-black/40 p-8">
-            <img src={logo.url} alt="EvolveNest Energy logo" className="w-56 rounded-xl" />
+            <img src={COMPANY.logo} alt="EvolveNest Energy logo" className="w-56 rounded-xl" />
           </div>
         </div>
       </section>

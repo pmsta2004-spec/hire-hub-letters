@@ -1,5 +1,4 @@
 import { Link } from "@tanstack/react-router";
-import logo from "@/assets/evolvenest-logo.jpeg.asset.json";
 import { COMPANY } from "@/lib/company";
 
 const nav = [
@@ -16,7 +15,7 @@ export function SiteHeader() {
       <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3">
         <Link to="/" className="flex items-center gap-3">
           <img
-            src={logo.url}
+            src={COMPANY.logo}
             alt="EvolveNest Energy logo"
             className="h-10 w-10 rounded-md object-cover"
           />
