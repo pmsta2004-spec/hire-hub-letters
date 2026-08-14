@@ -1,4 +1,3 @@
-import logo from "@/assets/evolvenest-logo.jpeg.asset.json";
 import { COMPANY } from "@/lib/company";
 import { formatDate, type Letter } from "@/lib/letters";
 import { termsFor } from "@/lib/terms";
@@ -120,7 +119,7 @@ function TermsAnnexure({ letter }: { letter: Letter }) {
     >
       <div className="flex items-center gap-3 border-b-2 border-brand pb-4">
         <img
-          src={logo.url}
+          src={COMPANY.logo}
           alt="EvolveNest Energy logo"
           className="h-12 w-12 shrink-0 rounded-md object-cover"
         />
@@ -193,7 +192,7 @@ export function LetterDocument({
     >
       <div className="flex items-start gap-4 border-b-2 border-brand pb-5">
         <img
-          src={logo.url}
+          src={COMPANY.logo}
           alt="EvolveNest Energy logo"
           className="h-20 w-20 shrink-0 rounded-lg object-cover"
         />
