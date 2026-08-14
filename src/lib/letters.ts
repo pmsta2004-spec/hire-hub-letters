@@ -207,7 +207,12 @@ export function emptyLetter(type: LetterType = "offer"): Letter {
 
 export function formatDate(d: string) {
   if (!d) return "—";
-  const date = new Date(d);
+  const date = new Date(`${d.slice(0, 10)}T00:00:00Z`);
   if (Number.isNaN(date.getTime())) return d;
-  return date.toLocaleDateString("en-IN", { day: "2-digit", month: "long", year: "numeric" });
+  return date.toLocaleDateString("en-IN", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  });
 }
