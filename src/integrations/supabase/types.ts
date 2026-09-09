@@ -14,7 +14,358 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      candidates: {
+        Row: {
+          ai_gaps: string[]
+          ai_score: number | null
+          ai_strengths: string[]
+          ai_summary: string
+          created_at: string
+          email: string
+          employment_type: string
+          id: string
+          interview_at: string | null
+          interview_mode: string
+          interview_notes: string
+          interview_status: string
+          invite_sent_at: string | null
+          name: string
+          notes: string
+          phone: string
+          position: string
+          resume_file: string
+          resume_text: string
+          source: string
+          stage: string
+          updated_at: string
+        }
+        Insert: {
+          ai_gaps?: string[]
+          ai_score?: number | null
+          ai_strengths?: string[]
+          ai_summary?: string
+          created_at?: string
+          email?: string
+          employment_type?: string
+          id?: string
+          interview_at?: string | null
+          interview_mode?: string
+          interview_notes?: string
+          interview_status?: string
+          invite_sent_at?: string | null
+          name?: string
+          notes?: string
+          phone?: string
+          position?: string
+          resume_file?: string
+          resume_text?: string
+          source?: string
+          stage?: string
+          updated_at?: string
+        }
+        Update: {
+          ai_gaps?: string[]
+          ai_score?: number | null
+          ai_strengths?: string[]
+          ai_summary?: string
+          created_at?: string
+          email?: string
+          employment_type?: string
+          id?: string
+          interview_at?: string | null
+          interview_mode?: string
+          interview_notes?: string
+          interview_status?: string
+          invite_sent_at?: string | null
+          name?: string
+          notes?: string
+          phone?: string
+          position?: string
+          resume_file?: string
+          resume_text?: string
+          source?: string
+          stage?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      email_log: {
+        Row: {
+          body: string
+          candidate_id: string | null
+          created_at: string
+          id: string
+          purpose: string
+          sent_at: string | null
+          status: string
+          subject: string
+          to_email: string
+        }
+        Insert: {
+          body?: string
+          candidate_id?: string | null
+          created_at?: string
+          id?: string
+          purpose?: string
+          sent_at?: string | null
+          status?: string
+          subject?: string
+          to_email?: string
+        }
+        Update: {
+          body?: string
+          candidate_id?: string | null
+          created_at?: string
+          id?: string
+          purpose?: string
+          sent_at?: string | null
+          status?: string
+          subject?: string
+          to_email?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_log_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "candidates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feedback: {
+        Row: {
+          ai_reply: string
+          created_at: string
+          email: string
+          id: string
+          message: string
+          name: string
+          rating: number
+        }
+        Insert: {
+          ai_reply?: string
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+          rating?: number
+        }
+        Update: {
+          ai_reply?: string
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+          rating?: number
+        }
+        Relationships: []
+      }
+      id_cards: {
+        Row: {
+          blood_group: string
+          created_at: string
+          department: string
+          email: string
+          emergency_contact: string
+          employee_id: string
+          employment_type: string
+          id: string
+          issue_date: string | null
+          letter_ref: string
+          location: string
+          name: string
+          phone: string
+          photo: string
+          position: string
+          valid_till: string | null
+        }
+        Insert: {
+          blood_group?: string
+          created_at?: string
+          department?: string
+          email?: string
+          emergency_contact?: string
+          employee_id?: string
+          employment_type?: string
+          id?: string
+          issue_date?: string | null
+          letter_ref?: string
+          location?: string
+          name?: string
+          phone?: string
+          photo?: string
+          position?: string
+          valid_till?: string | null
+        }
+        Update: {
+          blood_group?: string
+          created_at?: string
+          department?: string
+          email?: string
+          emergency_contact?: string
+          employee_id?: string
+          employment_type?: string
+          id?: string
+          issue_date?: string | null
+          letter_ref?: string
+          location?: string
+          name?: string
+          phone?: string
+          photo?: string
+          position?: string
+          valid_till?: string | null
+        }
+        Relationships: []
+      }
+      letters: {
+        Row: {
+          address: string
+          candidate_id: string | null
+          created_at: string
+          ctc: string
+          department: string
+          duration: string
+          email: string
+          employment_type: string
+          id: string
+          letter_date: string | null
+          letter_id: string
+          location: string
+          name: string
+          notes: string
+          pay_cycle: string
+          phone: string
+          position: string
+          probation: string
+          reporting_to: string
+          signatory_name: string
+          signatory_title: string
+          start_date: string | null
+          stipend: string
+          type: string
+          updated_at: string
+          work_hours: string
+        }
+        Insert: {
+          address?: string
+          candidate_id?: string | null
+          created_at?: string
+          ctc?: string
+          department?: string
+          duration?: string
+          email?: string
+          employment_type?: string
+          id?: string
+          letter_date?: string | null
+          letter_id: string
+          location?: string
+          name?: string
+          notes?: string
+          pay_cycle?: string
+          phone?: string
+          position?: string
+          probation?: string
+          reporting_to?: string
+          signatory_name?: string
+          signatory_title?: string
+          start_date?: string | null
+          stipend?: string
+          type?: string
+          updated_at?: string
+          work_hours?: string
+        }
+        Update: {
+          address?: string
+          candidate_id?: string | null
+          created_at?: string
+          ctc?: string
+          department?: string
+          duration?: string
+          email?: string
+          employment_type?: string
+          id?: string
+          letter_date?: string | null
+          letter_id?: string
+          location?: string
+          name?: string
+          notes?: string
+          pay_cycle?: string
+          phone?: string
+          position?: string
+          probation?: string
+          reporting_to?: string
+          signatory_name?: string
+          signatory_title?: string
+          start_date?: string | null
+          stipend?: string
+          type?: string
+          updated_at?: string
+          work_hours?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "letters_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "candidates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      org_settings: {
+        Row: {
+          address1: string
+          address2: string
+          cin: string
+          email: string
+          gst: string
+          hr_email: string
+          id: number
+          name: string
+          phone: string
+          signatory_name: string
+          signatory_title: string
+          tagline: string
+          updated_at: string
+          website: string
+        }
+        Insert: {
+          address1?: string
+          address2?: string
+          cin?: string
+          email?: string
+          gst?: string
+          hr_email?: string
+          id?: number
+          name?: string
+          phone?: string
+          signatory_name?: string
+          signatory_title?: string
+          tagline?: string
+          updated_at?: string
+          website?: string
+        }
+        Update: {
+          address1?: string
+          address2?: string
+          cin?: string
+          email?: string
+          gst?: string
+          hr_email?: string
+          id?: number
+          name?: string
+          phone?: string
+          signatory_name?: string
+          signatory_title?: string
+          tagline?: string
+          updated_at?: string
+          website?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
