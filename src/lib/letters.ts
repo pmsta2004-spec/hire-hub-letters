@@ -6,7 +6,13 @@ export const LETTER_TYPES: { value: LetterType; label: string }[] = [
   { value: "appointment", label: "Appointment Letter" },
 ];
 
-export type EmploymentType = "Intern" | "Fresher" | "Experienced" | "Contract" | "Full-time" | "Part-time";
+export type EmploymentType =
+  | "Intern"
+  | "Fresher"
+  | "Experienced"
+  | "Contract"
+  | "Full-time"
+  | "Part-time";
 
 export const EMPLOYMENT_TYPES: EmploymentType[] = [
   "Intern",
@@ -24,10 +30,10 @@ export const POSITIONS = [
   "Full Stack Developer",
   "Data Analyst",
   "AI/ML Engineer",
-  "Solar Design Engineer",
-  "Electrical Engineer",
-  "Project Engineer",
-  "Site Supervisor",
+  "Product Manager",
+  "QA Engineer",
+  "DevOps Engineer",
+  "UI/UX Designer",
   "Business Development Executive",
   "Sales Manager",
   "Marketing Intern",
@@ -40,24 +46,17 @@ export const POSITIONS = [
   "Graphic Designer",
 ];
 
-export const OFFICE_LOCATIONS = [
-  "K No-34 Khushi Vihar, Manaknagar, Lucknow, Uttar Pradesh, India",
-  "Office No. 306, Prisma Business Park, AB Road, Indore, India",
-  "Remote",
-];
-
 export type Letter = {
   id: string;
   letterId: string;
   type: LetterType;
+  candidateId: string | null;
   createdAt: string;
   updatedAt: string;
-  // candidate
   name: string;
   email: string;
   phone: string;
   address: string;
-  // role
   position: string;
   employmentType: EmploymentType;
   department: string;
@@ -76,19 +75,6 @@ export type Letter = {
   signatoryTitle: string;
 };
 
-export type Applicant = {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  position: string;
-  employmentType: EmploymentType;
-  source: string;
-  stage: Stage;
-  notes: string;
-  createdAt: string;
-};
-
 export const STAGES = [
   "Applied",
   "Screening",
@@ -100,79 +86,48 @@ export const STAGES = [
 ] as const;
 export type Stage = (typeof STAGES)[number];
 
-const LETTER_KEY = "ene_letters_v1";
-const APPLICANT_KEY = "ene_applicants_v1";
+export type Candidate = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  position: string;
+  employmentType: EmploymentType;
+  source: string;
+  stage: Stage;
+  resumeText: string;
+  resumeFile: string;
+  aiScore: number | null;
+  aiSummary: string;
+  aiStrengths: string[];
+  aiGaps: string[];
+  interviewAt: string | null;
+  interviewMode: string;
+  interviewStatus: string;
+  interviewNotes: string;
+  inviteSentAt: string | null;
+  notes: string;
+  createdAt: string;
+};
 
-function read<T>(key: string): T[] {
-  if (typeof window === "undefined") return [];
-  try {
-    return JSON.parse(window.localStorage.getItem(key) || "[]") as T[];
-  } catch {
-    return [];
-  }
-}
-
-function write<T>(key: string, rows: T[]) {
-  window.localStorage.setItem(key, JSON.stringify(rows));
-}
+export const INTERVIEW_STATUSES = [
+  "Not scheduled",
+  "Invited",
+  "Confirmed",
+  "Completed",
+  "No show",
+  "Cancelled",
+] as const;
 
 export function uid() {
   return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
 }
 
-const PREFIX: Record<LetterType, string> = {
+export const PREFIX: Record<LetterType, string> = {
   offer: "OFR",
   joining: "JOL",
   appointment: "APT",
 };
-
-export function nextLetterId(type: LetterType) {
-  const year = new Date().getFullYear();
-  const count = getLetters().filter((l) => l.type === type).length + 1;
-  return `ENE/${PREFIX[type]}/${year}/${String(count).padStart(4, "0")}`;
-}
-
-export function getLetters(): Letter[] {
-  return read<Letter>(LETTER_KEY).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-}
-
-export function getLetter(id: string) {
-  return getLetters().find((l) => l.id === id);
-}
-
-export function saveLetter(letter: Letter) {
-  const rows = read<Letter>(LETTER_KEY);
-  const i = rows.findIndex((r) => r.id === letter.id);
-  if (i >= 0) rows[i] = letter;
-  else rows.push(letter);
-  write(LETTER_KEY, rows);
-}
-
-export function deleteLetter(id: string) {
-  write(
-    LETTER_KEY,
-    read<Letter>(LETTER_KEY).filter((r) => r.id !== id),
-  );
-}
-
-export function getApplicants(): Applicant[] {
-  return read<Applicant>(APPLICANT_KEY).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-}
-
-export function saveApplicant(a: Applicant) {
-  const rows = read<Applicant>(APPLICANT_KEY);
-  const i = rows.findIndex((r) => r.id === a.id);
-  if (i >= 0) rows[i] = a;
-  else rows.push(a);
-  write(APPLICANT_KEY, rows);
-}
-
-export function deleteApplicant(id: string) {
-  write(
-    APPLICANT_KEY,
-    read<Applicant>(APPLICANT_KEY).filter((r) => r.id !== id),
-  );
-}
 
 export function emptyLetter(type: LetterType = "offer"): Letter {
   const today = new Date().toISOString().slice(0, 10);
@@ -180,6 +135,7 @@ export function emptyLetter(type: LetterType = "offer"): Letter {
     id: uid(),
     letterId: "",
     type,
+    candidateId: null,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     name: "",
@@ -189,7 +145,7 @@ export function emptyLetter(type: LetterType = "offer"): Letter {
     position: POSITIONS[0]!,
     employmentType: "Fresher",
     department: "",
-    location: OFFICE_LOCATIONS[1]!,
+    location: "",
     reportingTo: "",
     startDate: today,
     letterDate: today,
@@ -200,12 +156,12 @@ export function emptyLetter(type: LetterType = "offer"): Letter {
     stipend: "",
     duration: "",
     notes: "",
-    signatoryName: "Authorised Signatory",
-    signatoryTitle: "CEO, EvolveNest Labs Pvt. Ltd.",
+    signatoryName: "",
+    signatoryTitle: "",
   };
 }
 
-export function formatDate(d: string) {
+export function formatDate(d: string | null | undefined) {
   if (!d) return "—";
   const date = new Date(`${d.slice(0, 10)}T00:00:00Z`);
   if (Number.isNaN(date.getTime())) return d;
@@ -214,5 +170,18 @@ export function formatDate(d: string) {
     month: "long",
     year: "numeric",
     timeZone: "UTC",
+  });
+}
+
+export function formatDateTime(d: string | null | undefined) {
+  if (!d) return "—";
+  const date = new Date(d);
+  if (Number.isNaN(date.getTime())) return d;
+  return date.toLocaleString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 }
