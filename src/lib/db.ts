@@ -14,7 +14,7 @@ import type { IdCard } from "@/lib/idcards";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const sb = supabase as any;
 
-function must<T>(res: { data: T; error: { message: string } | null }): T {
+function must<T = any>(res: { data: T; error: { message: string } | null }): T {
   if (res.error) throw new Error(res.error.message);
   return res.data;
 }
@@ -130,7 +130,7 @@ export async function listCandidates(): Promise<Candidate[]> {
       .order("ai_score", { ascending: false, nullsFirst: false })
       .order("created_at", { ascending: false }),
   );
-  return (data ?? []).map(toCandidate);
+  return ((data ?? []) as any[]).map(toCandidate);
 }
 
 export async function addCandidate(c: Partial<Candidate>): Promise<Candidate> {
@@ -141,7 +141,7 @@ export async function addCandidate(c: Partial<Candidate>): Promise<Candidate> {
 export async function addCandidates(list: Partial<Candidate>[]): Promise<Candidate[]> {
   if (list.length === 0) return [];
   const data = must(await sb.from("candidates").insert(list.map(candidateRow)).select("*"));
-  return (data ?? []).map(toCandidate);
+  return ((data ?? []) as any[]).map(toCandidate);
 }
 
 export async function updateCandidate(id: string, patch: Partial<Candidate>) {
@@ -225,7 +225,7 @@ export async function listLetters(): Promise<Letter[]> {
   const data = must(
     await sb.from("letters").select("*").order("created_at", { ascending: false }),
   );
-  return (data ?? []).map(toLetter);
+  return ((data ?? []) as any[]).map(toLetter);
 }
 
 export async function getLetterById(id: string): Promise<Letter | null> {
@@ -308,7 +308,7 @@ export async function listIdCards(): Promise<IdCard[]> {
   const data = must(
     await sb.from("id_cards").select("*").order("created_at", { ascending: false }),
   );
-  return (data ?? []).map(toCard);
+  return ((data ?? []) as any[]).map(toCard);
 }
 
 export async function nextEmployeeId(): Promise<string> {
@@ -351,7 +351,7 @@ export async function listFeedback(): Promise<Feedback[]> {
   const data = must(
     await sb.from("feedback").select("*").order("created_at", { ascending: false }),
   );
-  return (data ?? []).map((r: any) => ({
+  return ((data ?? []) as any[]).map((r: any) => ({
     id: r.id,
     name: r.name ?? "",
     email: r.email ?? "",
@@ -398,7 +398,7 @@ export async function listEmails(): Promise<EmailRow[]> {
   const data = must(
     await sb.from("email_log").select("*").order("created_at", { ascending: false }).limit(200),
   );
-  return (data ?? []).map((r: any) => ({
+  return ((data ?? []) as any[]).map((r: any) => ({
     id: r.id,
     candidateId: r.candidate_id,
     toEmail: r.to_email ?? "",

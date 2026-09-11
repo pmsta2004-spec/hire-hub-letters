@@ -1,6 +1,6 @@
-import { COMPANY } from "@/lib/company";
 import { formatDate } from "@/lib/letters";
 import type { IdCard } from "@/lib/idcards";
+import { DEFAULT_ORG, type Org } from "@/lib/org";
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
@@ -13,21 +13,17 @@ function Row({ label, value }: { label: string; value: string }) {
   );
 }
 
-export function IdCardDocument({ card }: { card: IdCard }) {
+export function IdCardDocument({ card, org = DEFAULT_ORG }: { card: IdCard; org?: Org }) {
   return (
     <div className="print-sheet flex flex-wrap gap-6">
       {/* FRONT */}
       <div className="id-card relative flex h-[336px] w-[212px] flex-col overflow-hidden rounded-2xl border border-border bg-white shadow-lg">
         <div className="brand-gradient px-3 pb-6 pt-3 text-center">
-          <img
-            src={COMPANY.logo}
-            alt="EvolveNest Energy logo"
-            className="mx-auto h-9 w-9 rounded-md bg-white object-cover p-0.5"
-          />
+          <div className="mx-auto flex h-9 w-9 items-center justify-center rounded-md bg-primary-foreground font-display text-xs font-bold text-brand-deep">AI</div>
           <p className="mt-1 font-display text-[10.5px] font-semibold uppercase tracking-wide text-primary-foreground">
-            {COMPANY.name}
+            {org.name}
           </p>
-          <p className="text-[7px] text-primary-foreground/80">{COMPANY.website}</p>
+          <p className="text-[7px] text-primary-foreground/80">{org.tagline}</p>
         </div>
 
         <div className="-mt-5 flex flex-col items-center px-3">
@@ -61,7 +57,7 @@ export function IdCardDocument({ card }: { card: IdCard }) {
 
         <div className="mt-auto border-t border-border px-3 py-2 text-center">
           <p className="text-[7px] leading-tight text-muted-foreground">
-            Ref: {card.letterId || "—"} · Issued {formatDate(card.issueDate)}
+            Ref: {card.letterRef || "—"} · Issued {formatDate(card.issueDate)}
           </p>
         </div>
       </div>
@@ -80,10 +76,10 @@ export function IdCardDocument({ card }: { card: IdCard }) {
         </div>
         <div className="px-3 text-[7.5px] leading-relaxed text-muted-foreground">
           <p className="mb-1">
-            This card is the property of {COMPANY.name} and must be surrendered on separation. It is
+            This card is the property of {org.name} and must be surrendered on separation. It is
             non-transferable and valid only with a matching employment record.
           </p>
-          <p>If found, please return to the address below or contact {COMPANY.phone}.</p>
+          <p>If found, please return to the address below{org.phone ? ` or contact ${org.phone}` : ""}.</p>
         </div>
         <div className="mt-auto border-t border-border px-3 py-2">
           <p className="mb-3 text-right text-[7.5px] text-muted-foreground">
@@ -91,9 +87,8 @@ export function IdCardDocument({ card }: { card: IdCard }) {
             <span className="border-t border-ink/40 pt-0.5">Authorised Signatory</span>
           </p>
           <p className="text-[6.5px] leading-tight text-muted-foreground">
-            {COMPANY.offices[1]}
-            <br />
-            {COMPANY.email} · GST {COMPANY.gst}
+            {org.address2 || org.address1 || "Company address not configured"}<br />
+            {[org.email, org.gst && `GST ${org.gst}`].filter(Boolean).join(" · ")}
           </p>
         </div>
       </div>

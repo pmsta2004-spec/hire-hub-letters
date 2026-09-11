@@ -1,22 +1,23 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { FileText, UserRound, FolderOpen, Download, IdCard, Building2 } from "lucide-react";
+import { FileText, Users, FolderOpen, IdCard, BrainCircuit, MessageSquareText, ArrowRight, CalendarCheck } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/SiteHeader";
-import { COMPANY } from "@/lib/company";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "EvolveNest Energy HR Suite — Offer & Joining Letters" },
+      { title: "AI-HRM | AI Hiring and HR Operations" },
       {
         name: "description",
         content:
-          "Generate offer letters, joining letters and appointment letters for interns, freshers and experienced hires, with an applicant tracking system and PDF download.",
+          "Rank resumes, schedule interviews, manage candidates, generate letters and create employee ID cards from one cloud workspace.",
       },
-      { property: "og:title", content: "EvolveNest Energy HR Suite" },
+      { property: "og:title", content: "AI-HRM | AI Hiring and HR Operations" },
       {
         property: "og:description",
-        content: "Applicant tracking plus instant offer, joining and appointment letters with PDF download.",
+        content: "An intelligent HR workspace for hiring, interviews, letters and employee onboarding.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Home,
@@ -24,27 +25,27 @@ export const Route = createFileRoute("/")({
 
 const features = [
   {
-    icon: UserRound,
-    title: "Applicant Tracking",
-    text: "Log every applicant, move them through stages from Applied to Joined, and generate their letter in one click.",
+    icon: Users,
+    title: "AI candidate ranking",
+    text: "Upload multiple resumes, compare job-fit scores and move the strongest candidates into interviews.",
     to: "/ats" as const,
   },
   {
     icon: FileText,
     title: "Letter Generator",
-    text: "Offer letter, letter of joining and appointment letter with position, employment type and location selection.",
+    text: "Create offer, joining and appointment letters from selected candidate records.",
     to: "/generate" as const,
   },
   {
     icon: FolderOpen,
     title: "Saved Records",
-    text: "Every letter is saved with a unique reference ID and can be reopened, edited or downloaded anytime.",
+    text: "Cloud-saved letters, employee cards and invitation activity stay searchable and editable.",
     to: "/records" as const,
   },
   {
     icon: IdCard,
     title: "AI Employee ID Cards",
-    text: "Pull details from any saved letter record, upload a photo, enhance it with AI and download a branded ID card as PDF.",
+    text: "Turn a completed hire into a print-ready employee card with photo enhancement.",
     to: "/idcard" as const,
   },
 ];
@@ -54,37 +55,35 @@ function Home() {
     <div className="min-h-screen bg-background">
       <SiteHeader />
 
-      <section className="brand-gradient">
-        <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 md:grid-cols-[1.3fr_1fr] md:py-24">
+      <section className="brand-gradient overflow-hidden">
+        <div className="mx-auto max-w-6xl px-4 py-14 md:py-20">
           <div>
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/25 px-3 py-1 text-xs text-brand">
-              <Building2 className="h-3.5 w-3.5" /> {COMPANY.website}
+            <span className="inline-flex items-center gap-2 rounded-full border border-primary-foreground/25 px-3 py-1 text-xs text-brand">
+              <BrainCircuit className="h-3.5 w-3.5" /> Artificial Intelligence Human Resource Manager
             </span>
             <h1 className="mt-5 font-display text-4xl font-bold leading-tight text-primary-foreground md:text-5xl">
-              Hire, track and issue letters — in minutes.
+              AI-HRM
             </h1>
             <p className="mt-4 max-w-xl text-sm leading-relaxed text-primary-foreground/75 md:text-base">
-              A simple HR desk for {COMPANY.name}: track applicants, then generate professional offer,
-              joining and appointment letters for interns, freshers and experienced hires. Each letter
-              gets a reference ID, is saved as a record and downloads as PDF.
+              Move from a folder of resumes to ranked candidates, scheduled interviews, offer letters and employee IDs without losing the hiring trail.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
                 to="/generate"
-                className="inline-flex items-center gap-2 rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-brand-foreground transition-opacity hover:opacity-90"
+                className="inline-flex items-center gap-2 rounded-md bg-brand px-5 py-3 text-sm font-semibold text-brand-foreground transition-opacity hover:opacity-90"
               >
-                <FileText className="h-4 w-4" /> Generate Letter
+                <Users className="h-4 w-4" /> Open hiring pipeline <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
                 to="/ats"
-                className="inline-flex items-center gap-2 rounded-lg border border-white/30 px-5 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-white/10"
+                className="inline-flex items-center gap-2 rounded-md border border-primary-foreground/30 px-5 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-foreground/10"
               >
-                <UserRound className="h-4 w-4" /> Open ATS
+                <FileText className="h-4 w-4" /> Generate a letter
               </Link>
             </div>
-          </div>
-          <div className="justify-self-center rounded-2xl border border-white/15 bg-black/40 p-8">
-            <img src={COMPANY.logo} alt="EvolveNest Energy logo" className="w-56 rounded-xl" />
+            <div className="mt-10 grid max-w-3xl grid-cols-2 gap-px overflow-hidden rounded-md border border-primary-foreground/20 bg-primary-foreground/20 md:grid-cols-4">
+              {["Resume intake", "AI shortlist", "Interview tracking", "Onboarding docs"].map((step, index) => <div key={step} className="bg-brand-deep/95 p-4 text-xs text-primary-foreground"><span className="mb-2 block font-display text-lg text-brand">0{index + 1}</span>{step}</div>)}
+            </div>
           </div>
         </div>
       </section>
@@ -105,20 +104,20 @@ function Home() {
         </div>
 
         <div className="mt-10 grid gap-5 sm:grid-cols-2">
-          <div className="rounded-xl border border-border bg-secondary p-6">
-            <IdCard className="h-5 w-5 text-primary" />
-            <h3 className="mt-3 font-display font-semibold">Unique letter IDs</h3>
+          <div className="border-l-2 border-brand bg-secondary p-6">
+            <CalendarCheck className="h-5 w-5 text-primary" />
+            <h3 className="mt-3 font-display font-semibold">One connected workflow</h3>
             <p className="mt-1 text-sm text-muted-foreground">
-              Format ENE/OFR/2026/0001 — auto-generated per letter type and stored with the record.
+              Candidate status, interview details, invitation history and onboarding documents stay connected.
             </p>
           </div>
-          <div className="rounded-xl border border-border bg-secondary p-6">
-            <Download className="h-5 w-5 text-primary" />
-            <h3 className="mt-3 font-display font-semibold">PDF download</h3>
+          <Link to="/feedback" className="border-l-2 border-primary bg-secondary p-6">
+            <MessageSquareText className="h-5 w-5 text-primary" />
+            <h3 className="mt-3 font-display font-semibold">Feedback that improves operations</h3>
             <p className="mt-1 text-sm text-muted-foreground">
-              Print-ready A4 layout with company header, CEO signature and applicant acceptance block.
+              Collect structured feedback and generate a thoughtful response with AI.
             </p>
-          </div>
+          </Link>
         </div>
       </section>
 

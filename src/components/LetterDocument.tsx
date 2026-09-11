@@ -1,6 +1,6 @@
-import { COMPANY } from "@/lib/company";
 import { formatDate, type Letter } from "@/lib/letters";
 import { termsFor } from "@/lib/terms";
+import { DEFAULT_ORG, type Org } from "@/lib/org";
 
 function Para({ children }: { children: React.ReactNode }) {
   return <p className="mb-4 text-[13.5px] leading-relaxed text-ink">{children}</p>;
@@ -12,7 +12,7 @@ function titleOf(l: Letter) {
   return "APPOINTMENT LETTER";
 }
 
-function Body({ l }: { l: Letter }) {
+function Body({ l, org }: { l: Letter; org: Org }) {
   const pay = l.employmentType === "Intern" ? l.stipend || l.ctc : l.ctc;
   const payWord = l.employmentType === "Intern" ? "stipend" : "compensation";
 
@@ -22,7 +22,7 @@ function Body({ l }: { l: Letter }) {
         <Para>Dear {l.name || "Candidate"},</Para>
         <Para>
           We are pleased to offer you the position of <strong>{l.position}</strong> (
-          {l.employmentType}) at {COMPANY.name}
+          {l.employmentType}) at {org.name}
           {l.department ? `, ${l.department} department` : ""}. Your engagement is expected to
           commence on <strong>{formatDate(l.startDate)}</strong>, based at {l.location}.
         </Para>
@@ -37,7 +37,7 @@ function Body({ l }: { l: Letter }) {
         <Para>
           This offer is contingent upon verification of your documents, previous employment and
           educational records. By accepting, you agree to maintain confidentiality of all company
-          information and to abide by the policies of {COMPANY.managedBy.replace("Managed by ", "")}
+          information and to abide by the policies of {org.name}.
         </Para>
         {l.notes ? <Para>{l.notes}</Para> : null}
         <Para>
@@ -53,7 +53,7 @@ function Body({ l }: { l: Letter }) {
       <>
         <Para>Dear {l.name || "Candidate"},</Para>
         <Para>
-          This letter confirms that you have joined {COMPANY.name} as{" "}
+          This letter confirms that you have joined {org.name} as{" "}
           <strong>{l.position}</strong> ({l.employmentType}) with effect from{" "}
           <strong>{formatDate(l.startDate)}</strong>
           {l.department ? `, in the ${l.department} department` : ""}. Your place of posting is{" "}
@@ -67,7 +67,7 @@ function Body({ l }: { l: Letter }) {
         </Para>
         <Para>
           You are requested to submit all pending documents to the HR department, if any. This letter
-          serves as an official record of your joining with {COMPANY.name}.
+          serves as an official record of your joining with {org.name}.
         </Para>
         {l.notes ? <Para>{l.notes}</Para> : null}
       </>
@@ -79,7 +79,7 @@ function Body({ l }: { l: Letter }) {
       <Para>Dear {l.name || "Candidate"},</Para>
       <Para>
         With reference to your application and subsequent interviews, we are pleased to appoint you
-        as <strong>{l.position}</strong> ({l.employmentType}) at {COMPANY.name}
+        as <strong>{l.position}</strong> ({l.employmentType}) at {org.name}
         {l.department ? `, ${l.department} department` : ""}, effective{" "}
         <strong>{formatDate(l.startDate)}</strong>. Your place of posting will be {l.location}.
       </Para>
@@ -101,7 +101,7 @@ function Body({ l }: { l: Letter }) {
       </Para>
       <Para>
         5. Notice period &amp; conduct: Your employment shall be governed by the policies of{" "}
-        {COMPANY.managedBy.replace("Managed by ", "")} as amended from time to time.
+        {org.name} as amended from time to time.
       </Para>
       {l.notes ? <Para>{l.notes}</Para> : null}
       <Para>Please sign below to confirm your acceptance of this appointment.</Para>
@@ -110,7 +110,11 @@ function Body({ l }: { l: Letter }) {
 }
 
 
-function TermsAnnexure({ letter }: { letter: Letter }) {
+function BrandMark() {
+  return <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-md bg-brand-deep font-display text-sm font-bold text-primary-foreground">AI</div>;
+}
+
+function TermsAnnexure({ letter, org }: { letter: Letter; org: Org }) {
   const groups = termsFor(letter.position, letter.employmentType);
   return (
     <div
@@ -118,14 +122,10 @@ function TermsAnnexure({ letter }: { letter: Letter }) {
       style={{ fontFamily: "var(--font-letter)" }}
     >
       <div className="flex items-center gap-3 border-b-2 border-brand pb-4">
-        <img
-          src={COMPANY.logo}
-          alt="EvolveNest Energy logo"
-          className="h-12 w-12 shrink-0 rounded-md object-cover"
-        />
+        <BrandMark />
         <div>
-          <h2 className="font-display text-lg font-bold leading-tight text-ink">{COMPANY.name}</h2>
-          <p className="text-[11px] text-muted-foreground">{COMPANY.website}</p>
+          <h2 className="font-display text-lg font-bold leading-tight text-ink">{org.name}</h2>
+          <p className="text-[11px] text-muted-foreground">{org.tagline}</p>
         </div>
       </div>
 
@@ -162,7 +162,7 @@ function TermsAnnexure({ letter }: { letter: Letter }) {
       <div className="mt-10 flex flex-wrap justify-between gap-10 text-[12.5px] text-ink">
         <div className="min-w-[220px]">
           <p className="h-12 border-b border-ink/40" />
-          <p className="mt-2 font-semibold">{letter.signatoryName || COMPANY.ceoName}</p>
+          <p className="mt-2 font-semibold">{letter.signatoryName || org.signatoryName}</p>
           <p className="text-muted-foreground">{letter.signatoryTitle}</p>
         </div>
         <div className="min-w-[220px]">
@@ -180,9 +180,11 @@ function TermsAnnexure({ letter }: { letter: Letter }) {
 export function LetterDocument({
   letter,
   showTerms = true,
+  org = DEFAULT_ORG,
 }: {
   letter: Letter;
   showTerms?: boolean;
+  org?: Org;
 }) {
   return (
     <>
@@ -191,22 +193,14 @@ export function LetterDocument({
       style={{ fontFamily: "var(--font-letter)" }}
     >
       <div className="flex items-start gap-4 border-b-2 border-brand pb-5">
-        <img
-          src={COMPANY.logo}
-          alt="EvolveNest Energy logo"
-          className="h-20 w-20 shrink-0 rounded-lg object-cover"
-        />
+        <BrandMark />
         <div className="min-w-0 flex-1">
-          <h2 className="font-display text-2xl font-bold leading-tight text-ink">{COMPANY.name}</h2>
-          <p className="text-[11px] text-muted-foreground">{COMPANY.managedBy}</p>
+          <h2 className="font-display text-2xl font-bold leading-tight text-ink">{org.name}</h2>
+          <p className="text-[11px] text-muted-foreground">{org.tagline}</p>
           <p className="mt-1 text-[11px] leading-snug text-muted-foreground">
-            {COMPANY.offices[0]}
-            <br />
-            {COMPANY.offices[1]}
-            <br />
-            {COMPANY.email} | {COMPANY.phone} | {COMPANY.website}
-            <br />
-            GST: {COMPANY.gst} | CIN: {COMPANY.cin}
+            {[org.address1, org.address2].filter(Boolean).join(" · ") || "Company address not configured"}<br />
+            {[org.email, org.phone, org.website].filter(Boolean).join(" · ")}<br />
+            {[org.gst && `GST: ${org.gst}`, org.cin && `CIN: ${org.cin}`].filter(Boolean).join(" · ")}
           </p>
         </div>
       </div>
@@ -229,14 +223,14 @@ export function LetterDocument({
         {letter.email ? <p>{letter.email}</p> : null}
       </div>
 
-      <Body l={letter} />
+      <Body l={letter} org={org} />
 
       <div className="mt-12 flex flex-wrap justify-between gap-10 text-[12.5px] text-ink">
         <div className="min-w-[220px]">
           <p className="h-12 border-b border-ink/40" />
-          <p className="mt-2 font-semibold">{letter.signatoryName || COMPANY.ceoName}</p>
+          <p className="mt-2 font-semibold">{letter.signatoryName || org.signatoryName}</p>
           <p className="text-muted-foreground">{letter.signatoryTitle}</p>
-          <p className="text-muted-foreground">{COMPANY.name}</p>
+          <p className="text-muted-foreground">{org.name}</p>
         </div>
         <div className="min-w-[220px]">
           <p className="h-12 border-b border-ink/40" />
@@ -246,7 +240,7 @@ export function LetterDocument({
         </div>
       </div>
     </div>
-      {showTerms ? <TermsAnnexure letter={letter} /> : null}
+      {showTerms ? <TermsAnnexure letter={letter} org={org} /> : null}
     </>
   );
 }

@@ -14,6 +14,7 @@ import { Route as AtsRouteImport } from './routes/ats'
 import { Route as GenerateRouteImport } from './routes/generate'
 import { Route as IdcardRouteImport } from './routes/idcard'
 import { Route as RecordsRouteImport } from './routes/records'
+import { Route as ApiAiRouteImport } from './routes/api/ai'
 import { Route as ApiEnhancePhotoRouteImport } from './routes/api/enhance-photo'
 
 const IndexRoute = IndexRouteImport.update({
@@ -41,6 +42,11 @@ const RecordsRoute = RecordsRouteImport.update({
   path: '/records',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAiRoute = ApiAiRouteImport.update({
+  id: '/api/ai',
+  path: '/api/ai',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiEnhancePhotoRoute = ApiEnhancePhotoRouteImport.update({
   id: '/api/enhance-photo',
   path: '/api/enhance-photo',
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/generate': typeof GenerateRoute
   '/idcard': typeof IdcardRoute
   '/records': typeof RecordsRoute
+  '/api/ai': typeof ApiAiRoute
   '/api/enhance-photo': typeof ApiEnhancePhotoRoute
 }
 export interface FileRoutesByTo {
@@ -61,6 +68,7 @@ export interface FileRoutesByTo {
   '/generate': typeof GenerateRoute
   '/idcard': typeof IdcardRoute
   '/records': typeof RecordsRoute
+  '/api/ai': typeof ApiAiRoute
   '/api/enhance-photo': typeof ApiEnhancePhotoRoute
 }
 export interface FileRoutesById {
@@ -70,14 +78,28 @@ export interface FileRoutesById {
   '/generate': typeof GenerateRoute
   '/idcard': typeof IdcardRoute
   '/records': typeof RecordsRoute
+  '/api/ai': typeof ApiAiRoute
   '/api/enhance-photo': typeof ApiEnhancePhotoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/ats' | '/generate' | '/idcard' | '/records' | '/api/enhance-photo'
+    | '/'
+    | '/ats'
+    | '/generate'
+    | '/idcard'
+    | '/records'
+    | '/api/ai'
+    | '/api/enhance-photo'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/ats' | '/generate' | '/idcard' | '/records' | '/api/enhance-photo'
+  to:
+    | '/'
+    | '/ats'
+    | '/generate'
+    | '/idcard'
+    | '/records'
+    | '/api/ai'
+    | '/api/enhance-photo'
   id:
     | '__root__'
     | '/'
@@ -85,6 +107,7 @@ export interface FileRouteTypes {
     | '/generate'
     | '/idcard'
     | '/records'
+    | '/api/ai'
     | '/api/enhance-photo'
   fileRoutesById: FileRoutesById
 }
@@ -94,6 +117,7 @@ export interface RootRouteChildren {
   GenerateRoute: typeof GenerateRoute
   IdcardRoute: typeof IdcardRoute
   RecordsRoute: typeof RecordsRoute
+  ApiAiRoute: typeof ApiAiRoute
   ApiEnhancePhotoRoute: typeof ApiEnhancePhotoRoute
 }
 
@@ -134,6 +158,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RecordsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/ai': {
+      id: '/api/ai'
+      path: '/api/ai'
+      fullPath: '/api/ai'
+      preLoaderRoute: typeof ApiAiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/enhance-photo': {
       id: '/api/enhance-photo'
       path: '/api/enhance-photo'
@@ -150,6 +181,7 @@ const rootRouteChildren: RootRouteChildren = {
   GenerateRoute: GenerateRoute,
   IdcardRoute: IdcardRoute,
   RecordsRoute: RecordsRoute,
+  ApiAiRoute: ApiAiRoute,
   ApiEnhancePhotoRoute: ApiEnhancePhotoRoute,
 }
 export const routeTree = rootRouteImport
