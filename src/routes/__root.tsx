@@ -78,21 +78,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "EvolveNest Energy HR Suite" },
+      { title: "AI-HRM | Intelligent Hiring Workspace" },
       {
         name: "description",
         content:
-          "Applicant tracking and instant offer, joining and appointment letters for EvolveNest Energy.",
+          "Rank resumes, track interviews, generate employment letters and create employee ID cards in one intelligent HR workspace.",
       },
-      { name: "author", content: "EvolveNest Labs Pvt. Ltd." },
-      { property: "og:title", content: "EvolveNest Energy HR Suite" },
+      { name: "author", content: "AI-HRM" },
+      { property: "og:title", content: "AI-HRM | Intelligent Hiring Workspace" },
       {
         property: "og:description",
-        content: "Track applicants and generate branded HR letters with PDF download.",
+        content: "AI-assisted candidate ranking, interview tracking, letters and employee records.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
       {
