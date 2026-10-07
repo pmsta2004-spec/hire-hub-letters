@@ -35,7 +35,10 @@ function FeedbackPage() {
   }, []);
 
   async function submit() {
-    if (!message.trim()) return toast.error("Please write a message");
+    if (!message.trim()) {
+      toast.error("Please write a message");
+      return;
+    }
     await addFeedback({ name, email, rating, message, aiReply: "" });
     setMessage("");
     setRows(await listFeedback());

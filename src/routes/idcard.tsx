@@ -176,7 +176,7 @@ function IdCardPage() {
                 From letter record
               </h2>
               <Field label="Reference ID">
-                <Select value={card.letterRef || undefined} onValueChange={loadFromRecord}>
+                <Select value={card.letterRef} onValueChange={loadFromRecord}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a saved letter" />
                   </SelectTrigger>
