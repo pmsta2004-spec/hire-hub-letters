@@ -11,9 +11,12 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AtsRouteImport } from './routes/ats'
+import { Route as ChatRouteImport } from './routes/chat'
+import { Route as FeedbackRouteImport } from './routes/feedback'
 import { Route as GenerateRouteImport } from './routes/generate'
 import { Route as IdcardRouteImport } from './routes/idcard'
 import { Route as RecordsRouteImport } from './routes/records'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ApiAiRouteImport } from './routes/api/ai'
 import { Route as ApiEnhancePhotoRouteImport } from './routes/api/enhance-photo'
 
@@ -25,6 +28,16 @@ const IndexRoute = IndexRouteImport.update({
 const AtsRoute = AtsRouteImport.update({
   id: '/ats',
   path: '/ats',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChatRoute = ChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FeedbackRoute = FeedbackRouteImport.update({
+  id: '/feedback',
+  path: '/feedback',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GenerateRoute = GenerateRouteImport.update({
@@ -42,6 +55,11 @@ const RecordsRoute = RecordsRouteImport.update({
   path: '/records',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAiRoute = ApiAiRouteImport.update({
   id: '/api/ai',
   path: '/api/ai',
@@ -56,18 +74,24 @@ const ApiEnhancePhotoRoute = ApiEnhancePhotoRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/ats': typeof AtsRoute
+  '/chat': typeof ChatRoute
+  '/feedback': typeof FeedbackRoute
   '/generate': typeof GenerateRoute
   '/idcard': typeof IdcardRoute
   '/records': typeof RecordsRoute
+  '/settings': typeof SettingsRoute
   '/api/ai': typeof ApiAiRoute
   '/api/enhance-photo': typeof ApiEnhancePhotoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ats': typeof AtsRoute
+  '/chat': typeof ChatRoute
+  '/feedback': typeof FeedbackRoute
   '/generate': typeof GenerateRoute
   '/idcard': typeof IdcardRoute
   '/records': typeof RecordsRoute
+  '/settings': typeof SettingsRoute
   '/api/ai': typeof ApiAiRoute
   '/api/enhance-photo': typeof ApiEnhancePhotoRoute
 }
@@ -75,9 +99,12 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/ats': typeof AtsRoute
+  '/chat': typeof ChatRoute
+  '/feedback': typeof FeedbackRoute
   '/generate': typeof GenerateRoute
   '/idcard': typeof IdcardRoute
   '/records': typeof RecordsRoute
+  '/settings': typeof SettingsRoute
   '/api/ai': typeof ApiAiRoute
   '/api/enhance-photo': typeof ApiEnhancePhotoRoute
 }
@@ -86,27 +113,36 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/ats'
+    | '/chat'
+    | '/feedback'
     | '/generate'
     | '/idcard'
     | '/records'
+    | '/settings'
     | '/api/ai'
     | '/api/enhance-photo'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/ats'
+    | '/chat'
+    | '/feedback'
     | '/generate'
     | '/idcard'
     | '/records'
+    | '/settings'
     | '/api/ai'
     | '/api/enhance-photo'
   id:
     | '__root__'
     | '/'
     | '/ats'
+    | '/chat'
+    | '/feedback'
     | '/generate'
     | '/idcard'
     | '/records'
+    | '/settings'
     | '/api/ai'
     | '/api/enhance-photo'
   fileRoutesById: FileRoutesById
@@ -114,9 +150,12 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AtsRoute: typeof AtsRoute
+  ChatRoute: typeof ChatRoute
+  FeedbackRoute: typeof FeedbackRoute
   GenerateRoute: typeof GenerateRoute
   IdcardRoute: typeof IdcardRoute
   RecordsRoute: typeof RecordsRoute
+  SettingsRoute: typeof SettingsRoute
   ApiAiRoute: typeof ApiAiRoute
   ApiEnhancePhotoRoute: typeof ApiEnhancePhotoRoute
 }
@@ -135,6 +174,20 @@ declare module '@tanstack/react-router' {
       path: '/ats'
       fullPath: '/ats'
       preLoaderRoute: typeof AtsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chat': {
+      id: '/chat'
+      path: '/chat'
+      fullPath: '/chat'
+      preLoaderRoute: typeof ChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/feedback': {
+      id: '/feedback'
+      path: '/feedback'
+      fullPath: '/feedback'
+      preLoaderRoute: typeof FeedbackRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/generate': {
@@ -158,6 +211,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RecordsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/ai': {
       id: '/api/ai'
       path: '/api/ai'
@@ -178,9 +238,12 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AtsRoute: AtsRoute,
+  ChatRoute: ChatRoute,
+  FeedbackRoute: FeedbackRoute,
   GenerateRoute: GenerateRoute,
   IdcardRoute: IdcardRoute,
   RecordsRoute: RecordsRoute,
+  SettingsRoute: SettingsRoute,
   ApiAiRoute: ApiAiRoute,
   ApiEnhancePhotoRoute: ApiEnhancePhotoRoute,
 }
