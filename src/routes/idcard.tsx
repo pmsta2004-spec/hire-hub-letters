@@ -14,26 +14,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { getLetters, formatDate, type Letter } from "@/lib/letters";
+import { formatDate, type Letter } from "@/lib/letters";
+import { deleteIdCard, listIdCards, listLetters, nextEmployeeId, saveIdCard } from "@/lib/db";
 import {
-  deleteIdCard,
   emptyIdCard,
-  getIdCards,
-  nextEmployeeId,
-  saveIdCard,
   type IdCard,
 } from "@/lib/idcards";
 
 export const Route = createFileRoute("/idcard")({
   head: () => ({
     meta: [
-      { title: "AI Employee ID Card Generator | EvolveNest Energy HR Suite" },
+      { title: "AI Employee ID Card Generator | AI-HRM" },
       {
         name: "description",
         content:
           "Create branded employee ID cards from saved letter records: upload a photo, enhance it with AI, add email and mobile, and download a print-ready PDF.",
       },
-      { property: "og:title", content: "Employee ID Card Generator | EvolveNest Energy" },
+      { property: "og:title", content: "Employee ID Card Generator | AI-HRM" },
       {
         property: "og:description",
         content:
@@ -65,9 +62,12 @@ function IdCardPage() {
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    setLetters(getLetters());
-    setSaved(getIdCards());
-    setCard((c) => ({ ...c, employeeId: c.employeeId || nextEmployeeId() }));
+    void (async () => {
+      setLetters(await listLetters());
+      setSaved(await listIdCards());
+      const eid = await nextEmployeeId();
+      setCard((c) => ({ ...c, employeeId: c.employeeId || eid }));
+    })();
   }, []);
 
   const set = <K extends keyof IdCard>(key: K, value: IdCard[K]) =>
@@ -78,7 +78,7 @@ function IdCardPage() {
     if (!l) return;
     setCard((c) => ({
       ...c,
-      letterId: l.letterId,
+      letterRef: l.letterId,
       name: l.name,
       position: l.position,
       department: l.department,
@@ -124,21 +124,28 @@ function IdCardPage() {
     }
   }
 
-  function save() {
+  async function save() {
     if (!card.name.trim()) {
       toast.error("Employee name is required");
-      return;
+      return false;
     }
-    const payload = { ...card, employeeId: card.employeeId || nextEmployeeId() };
-    saveIdCard(payload);
-    setCard(payload);
-    setSaved(getIdCards());
-    toast.success(`Saved ${payload.employeeId}`);
+    try {
+      const stored = await saveIdCard({
+        ...card,
+        employeeId: card.employeeId || (await nextEmployeeId()),
+      });
+      setCard(stored);
+      setSaved(await listIdCards());
+      toast.success(`Saved ${stored.employeeId}`);
+      return true;
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Could not save");
+      return false;
+    }
   }
 
-  function download() {
-    save();
-    setTimeout(() => window.print(), 350);
+  async function download() {
+    if (await save()) setTimeout(() => window.print(), 350);
   }
 
   return (
@@ -153,10 +160,10 @@ function IdCardPage() {
             </p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={save}>
+            <Button variant="outline" onClick={() => void save()}>
               <Save className="mr-2 h-4 w-4" /> Save card
             </Button>
-            <Button onClick={download}>
+            <Button onClick={() => void download()}>
               <Download className="mr-2 h-4 w-4" /> Download PDF
             </Button>
           </div>
@@ -169,7 +176,7 @@ function IdCardPage() {
                 From letter record
               </h2>
               <Field label="Reference ID">
-                <Select value={card.letterId} onValueChange={loadFromRecord}>
+                <Select value={card.letterRef || undefined} onValueChange={loadFromRecord}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a saved letter" />
                   </SelectTrigger>
@@ -325,8 +332,7 @@ function IdCardPage() {
                           size="sm"
                           variant="ghost"
                           onClick={() => {
-                            deleteIdCard(c.id);
-                            setSaved(getIdCards());
+                            void deleteIdCard(c.id).then(async () => setSaved(await listIdCards()));
                             toast.success("Card deleted");
                           }}
                         >

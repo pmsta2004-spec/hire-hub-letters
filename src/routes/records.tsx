@@ -9,26 +9,27 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
   LETTER_TYPES,
-  deleteLetter,
   formatDate,
-  getLetters,
   type Letter,
 } from "@/lib/letters";
+import { deleteLetter, listLetters } from "@/lib/db";
 
 export const Route = createFileRoute("/records")({
   head: () => ({
     meta: [
-      { title: "Letter Records & Archive | EvolveNest Energy HR Suite" },
+      { title: "Letter Records & Archive | AI-HRM" },
       {
         name: "description",
         content:
           "Browse every saved offer, joining and appointment letter by reference ID, edit details or download the PDF again.",
       },
-      { property: "og:title", content: "Letter Records | EvolveNest Energy" },
+      { property: "og:title", content: "Letter Records | AI-HRM" },
       {
         property: "og:description",
         content: "Searchable archive of all generated HR letters with edit and PDF download.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: RecordsPage,
@@ -43,7 +44,9 @@ function RecordsPage() {
   const [q, setQ] = useState("");
   const [printing, setPrinting] = useState<Letter | null>(null);
 
-  useEffect(() => setRows(getLetters()), []);
+  useEffect(() => {
+    void listLetters().then(setRows).catch(() => toast.error("Could not load records"));
+  }, []);
 
   useEffect(() => {
     if (!printing) return;
@@ -58,9 +61,9 @@ function RecordsPage() {
     `${r.name} ${r.letterId} ${r.position} ${typeLabel(r.type)}`.toLowerCase().includes(q.toLowerCase()),
   );
 
-  function remove(id: string) {
-    deleteLetter(id);
-    setRows(getLetters());
+  async function remove(id: string) {
+    await deleteLetter(id);
+    setRows(await listLetters());
     toast.success("Record deleted");
   }
 
@@ -71,7 +74,7 @@ function RecordsPage() {
         <div className="no-print">
           <h1 className="font-display text-2xl font-bold">Letter records</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            {rows.length} letter{rows.length === 1 ? "" : "s"} saved on this device.
+            {rows.length} letter{rows.length === 1 ? "" : "s"} saved in the cloud.
           </p>
 
           <div className="relative mt-5 max-w-sm">
@@ -118,7 +121,7 @@ function RecordsPage() {
                   <Button variant="outline" size="sm" onClick={() => setPrinting(r)}>
                     <Download className="mr-2 h-4 w-4" /> PDF
                   </Button>
-                  <Button variant="ghost" size="icon" onClick={() => remove(r.id)}>
+                  <Button variant="ghost" size="icon" onClick={() => void remove(r.id)}>
                     <Trash2 className="h-4 w-4 text-destructive" />
                   </Button>
                 </div>
