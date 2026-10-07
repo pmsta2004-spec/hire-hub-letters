@@ -18,19 +18,18 @@ import {
 import {
   EMPLOYMENT_TYPES,
   LETTER_TYPES,
-  OFFICE_LOCATIONS,
   POSITIONS,
   emptyLetter,
-  getLetter,
-  nextLetterId,
-  saveLetter,
   type EmploymentType,
   type Letter,
   type LetterType,
 } from "@/lib/letters";
+import { getLetterById, loadOrg, nextLetterId, saveLetter, updateCandidate } from "@/lib/db";
+import { DEFAULT_ORG, locationOptions, type Org } from "@/lib/org";
 
 type Search = {
   id?: string | undefined;
+  candidateId?: string | undefined;
   type?: LetterType | undefined;
   name?: string | undefined;
   email?: string | undefined;
@@ -44,6 +43,7 @@ const str = (v: unknown) => (typeof v === "string" && v ? v : undefined);
 export const Route = createFileRoute("/generate")({
   validateSearch: (search: Record<string, unknown>): Search => ({
     id: str(search["id"]),
+    candidateId: str(search["candidateId"]),
     type: (["offer", "joining", "appointment"] as const).includes(search["type"] as LetterType)
       ? (search["type"] as LetterType)
       : undefined,
@@ -55,17 +55,19 @@ export const Route = createFileRoute("/generate")({
   }),
   head: () => ({
     meta: [
-      { title: "Generate Offer, Joining & Appointment Letters | EvolveNest Energy" },
+      { title: "Offer, Joining & Appointment Letters | AI-HRM" },
       {
         name: "description",
         content:
           "Fill in candidate and role details to instantly generate a company-branded offer letter, joining letter or appointment letter with PDF download.",
       },
-      { property: "og:title", content: "Generate HR Letters | EvolveNest Energy" },
+      { property: "og:title", content: "Generate HR Letters | AI-HRM" },
       {
         property: "og:description",
         content: "Create branded offer, joining and appointment letters with unique reference IDs.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: GeneratePage,
@@ -97,56 +99,71 @@ function GeneratePage() {
   const [ready, setReady] = useState(false);
   const [showTerms, setShowTerms] = useState(true);
 
+  const [org, setOrg] = useState<Org>(DEFAULT_ORG);
+
   useEffect(() => {
-    const existing = search.id ? getLetter(search.id) : undefined;
-    if (existing) {
-      setLetter(existing);
-    } else {
-      const base = emptyLetter(search.type ?? "offer");
-      setLetter({
-        ...base,
-        name: search.name ?? "",
-        email: search.email ?? "",
-        phone: search.phone ?? "",
-        position: search.position ?? base.position,
-        employmentType: search.employmentType ?? base.employmentType,
-        letterId: nextLetterId(search.type ?? "offer"),
-      });
-    }
-    setReady(true);
+    void (async () => {
+      const o = await loadOrg();
+      setOrg(o);
+      const existing = search.id ? await getLetterById(search.id) : null;
+      if (existing) {
+        setLetter(existing);
+      } else {
+        const type = search.type ?? "offer";
+        const base = emptyLetter(type);
+        setLetter({
+          ...base,
+          id: "",
+          candidateId: search.candidateId ?? null,
+          name: search.name ?? "",
+          email: search.email ?? "",
+          phone: search.phone ?? "",
+          position: search.position ?? base.position,
+          employmentType: search.employmentType ?? base.employmentType,
+          location: locationOptions(o)[0] ?? "Remote",
+          signatoryName: o.signatoryName,
+          signatoryTitle: o.signatoryTitle,
+          letterId: await nextLetterId(type),
+        });
+      }
+      setReady(true);
+    })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search.id]);
 
   const set = <K extends keyof Letter>(key: K, value: Letter[K]) =>
     setLetter((l) => ({ ...l, [key]: value }));
 
-  function changeType(type: LetterType) {
-    setLetter((l) => ({
-      ...l,
-      type,
-      letterId: search.id ? l.letterId : nextLetterId(type),
-    }));
+  async function changeType(type: LetterType) {
+    const letterId = search.id ? letter.letterId : await nextLetterId(type);
+    setLetter((l) => ({ ...l, type, letterId }));
   }
 
-  function save() {
+  async function save() {
     if (!letter.name.trim()) {
       toast.error("Candidate name is required");
-      return;
+      return false;
     }
-    const payload: Letter = {
-      ...letter,
-      letterId: letter.letterId || nextLetterId(letter.type),
-      updatedAt: new Date().toISOString(),
-    };
-    saveLetter(payload);
-    setLetter(payload);
-    toast.success(`Saved as ${payload.letterId}`);
-    navigate({ to: "/generate", search: { id: payload.id }, replace: true });
+    try {
+      const stored = await saveLetter({
+        ...letter,
+        letterId: letter.letterId || (await nextLetterId(letter.type)),
+      });
+      setLetter(stored);
+      if (stored.candidateId && letter.type === "offer") {
+        await updateCandidate(stored.candidateId, { stage: "Offer Sent" });
+      }
+      toast.success(`Saved as ${stored.letterId}`);
+      navigate({ to: "/generate", search: { id: stored.id }, replace: true });
+      return true;
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Could not save");
+      return false;
+    }
   }
 
-  function downloadPdf() {
-    save();
-    setTimeout(() => window.print(), 350);
+  async function downloadPdf() {
+    if (await save()) setTimeout(() => window.print(), 350);
   }
 
   if (!ready) return null;
@@ -171,10 +188,10 @@ function GeneratePage() {
             <Button variant="outline" onClick={() => setShowTerms((v) => !v)}>
               <FileText className="mr-2 h-4 w-4" /> {showTerms ? "Hide" : "Include"} terms page
             </Button>
-            <Button variant="outline" onClick={save}>
+            <Button variant="outline" onClick={() => void save()}>
               <Save className="mr-2 h-4 w-4" /> Save record
             </Button>
-            <Button onClick={downloadPdf}>
+            <Button onClick={() => void downloadPdf()}>
               <Download className="mr-2 h-4 w-4" /> Download PDF
             </Button>
           </div>
@@ -187,7 +204,7 @@ function GeneratePage() {
                 Letter
               </h2>
               <Field label="Letter type">
-                <Select value={letter.type} onValueChange={(v) => changeType(v as LetterType)}>
+                <Select value={letter.type} onValueChange={(v) => void changeType(v as LetterType)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -311,7 +328,7 @@ function GeneratePage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {OFFICE_LOCATIONS.map((o) => (
+                    {[...new Set([...locationOptions(org), "Remote", letter.location].filter(Boolean))].map((o) => (
                       <SelectItem key={o} value={o}>
                         {o}
                       </SelectItem>
@@ -427,7 +444,7 @@ function GeneratePage() {
           </div>
 
           <div>
-            <LetterDocument letter={letter} showTerms={showTerms} />
+            <LetterDocument letter={letter} showTerms={showTerms} org={org} />
           </div>
         </div>
       </main>
