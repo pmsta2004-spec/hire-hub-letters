@@ -2,20 +2,28 @@ export type AiMessage = { role: "system" | "user" | "assistant"; content: string
 
 export async function askAI(messages: AiMessage[]): Promise<string> {
   const key = process.env["LOVABLE_API_KEY"];
-  if (!key) throw new Error("Missing LOVABLE_API_KEY");
+  const openaiKey = process.env["OPENAI_API_KEY"];
+  if (!key && !openaiKey) throw new Error("AI key missing: add OPENAI_API_KEY in your hosting settings");
 
-  const res = await fetch("https://ai.gateway.lovable.dev/v1/responses", {
-    method: "POST",
-    headers: { "Lovable-API-Key": key, "X-Lovable-AIG-SDK": "fetch", "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: "openai/gpt-6-astra",
-      stream: true,
-      store: false,
-      reasoning: { effort: "low", summary: "auto" },
-      include: ["reasoning.encrypted_content"],
-      input: messages.map((m) => ({ role: m.role, content: m.content })),
-    }),
-  });
+  const input = messages.map((m) => ({ role: m.role, content: m.content }));
+  const res = key
+    ? await fetch("https://ai.gateway.lovable.dev/v1/responses", {
+        method: "POST",
+        headers: { "Lovable-API-Key": key, "X-Lovable-AIG-SDK": "fetch", "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "openai/gpt-6-astra",
+          stream: true,
+          store: false,
+          reasoning: { effort: "low", summary: "auto" },
+          include: ["reasoning.encrypted_content"],
+          input,
+        }),
+      })
+    : await fetch("https://api.openai.com/v1/responses", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${openaiKey}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ model: "gpt-4o-mini", stream: true, store: false, input }),
+      });
   if (!res.ok) {
     const errorText = await res.text();
     throw Object.assign(new Error(errorText.slice(0, 400)), { status: res.status });
