@@ -2,15 +2,6 @@
 
 helo welcome to hir-hub an AI-HRM
 
-This project was built with [Lovable](https://lovable.dev).
-
-**Live app**: https://hire-hub-letters.lovable.app
-
-## Build with Lovable
-
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/3355ff9c-c239-4d3f-b852-4231d0d9766d).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
 - **Stay in sync**: every change made in Lovable is committed straight to this repository.
 - **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
 
